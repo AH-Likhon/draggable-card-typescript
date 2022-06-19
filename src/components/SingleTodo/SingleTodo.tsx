@@ -3,7 +3,7 @@ import { AiFillDelete, AiFillEdit } from "react-icons/ai";
 import { MdDone } from "react-icons/md";
 import './SingleTodo.css';
 import { useEffect, useRef, useState } from "react";
-import { addToCart } from "../LocalStorage/LocalStorage";
+import { addToCart, getCart, getFirstColumn, handleDelete, handleDid, handleESubmit } from "../LocalStorage/LocalStorage";
 
 type SingleTodoTypes = {
     todo: TodoTypes;
@@ -18,16 +18,21 @@ type SingleTodoTypes = {
 const SingleTodo = ({ todo, todos, setTodos }: SingleTodoTypes) => {
     const [edit, setEdit] = useState<boolean>(false);
     const [editTodo, setEditTodo] = useState<string>(todo.todo);
-    // const [dragData, setDragData] = useState<TodoTypes[]>([]);
+    const [dragData, setDragData] = useState<TodoTypes[]>([]);
+
+    const getData = getCart();
+    const getFirstColumnData = getFirstColumn();
 
     const handleDone = (id: number) => {
-        setTodos(todos.map(t => t.id === id ? { ...t, isDone: !t.isDone } : t))
+        setTodos(todos.map(t => t.id === id ? { ...t, isDone: !t.isDone } : t));
+        // setTodos(todos.map(t => t.id === id ? { ...t, isDone: !t.isDone } : t));
+        // setDragData(getData.map((t: any) => t.id === id ? { ...t, isDone: !t.isDone } : t))
     }
 
-    const handleDelete = (id: number) => {
-        const result = todos.filter(t => t.id !== id);
-        setTodos(result);
-    }
+    // const handleDelete = (id: number) => {
+    //     const result = todos.filter(t => t.id !== id);
+    //     setTodos(result);
+    // }
 
     const handleEdit = () => {
         if (!edit && !todo.isDone) {
@@ -35,14 +40,14 @@ const SingleTodo = ({ todo, todos, setTodos }: SingleTodoTypes) => {
         }
     }
 
-    const handleESubmit = (e: React.FormEvent, id: number) => {
-        e.preventDefault();
+    // const handleESubmit = (e: React.FormEvent, id: number) => {
+    //     e.preventDefault();
 
-        const result = todos.map(t => t.id === id ? { ...t, todo: editTodo } : t);
-        setTodos(result);
+    //     const result = todos.map(t => t.id === id ? { ...t, todo: editTodo } : t);
+    //     setTodos(result);
 
-        setEdit(false);
-    }
+    //     setEdit(false);
+    // }
 
     const inputRef = useRef<HTMLInputElement>(null);
 
@@ -77,7 +82,7 @@ const SingleTodo = ({ todo, todos, setTodos }: SingleTodoTypes) => {
 
     return (
         <div draggable onDragStart={e => hadleDragStart(e, todo.id)}>
-            <form className="single_todos" onSubmit={e => handleESubmit(e, todo.id)}>
+            <form className="single_todos" onSubmit={e => handleESubmit(e, todo.id, setEdit, editTodo)}>
                 {
                     edit ? <input
                         ref={inputRef}
@@ -90,6 +95,7 @@ const SingleTodo = ({ todo, todos, setTodos }: SingleTodoTypes) => {
                         {todo.todo}
                     </span>
                 }
+
                 <div>
                     <span onClick={handleEdit} className="icon">
                         <AiFillEdit />
@@ -97,7 +103,7 @@ const SingleTodo = ({ todo, todos, setTodos }: SingleTodoTypes) => {
                     <span onClick={() => handleDelete(todo.id)} className="icon">
                         <AiFillDelete />
                     </span>
-                    <span onClick={() => handleDone(todo.id)} className="icon">
+                    <span onClick={() => handleDid(todo.id)} className="icon">
                         <MdDone />
                     </span>
                 </div>

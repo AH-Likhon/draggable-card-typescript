@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { getCart } from "../LocalStorage/LocalStorage";
+import { getCart, getFirstColumn } from "../LocalStorage/LocalStorage";
 import SingleTodo from "../SingleTodo/SingleTodo";
 import { TodoTypes } from "../Todo/Todo";
 import './TodoList.css';
@@ -18,6 +18,7 @@ const TodoList: React.FC<TodoProps> = ({ todos, setTodos }: TodoProps) => {
     const handleDragOverEnd = () => setDragOver(false);
 
     const getData = getCart();
+    const firstColumnData = getFirstColumn();
 
     // console.log('GetData', getData);
 
@@ -49,7 +50,7 @@ const TodoList: React.FC<TodoProps> = ({ todos, setTodos }: TodoProps) => {
         // e.dataTransfer.dropEffect = 'move';
         setDragData([...dragData, JSON.parse(data)]);
         setDragOver(false);
-        console.log(setTodos(todos.filter(t => t.id !== JSON.parse(data).id)));
+        // console.log(setTodos(todos.filter(t => t.id !== JSON.parse(data).id)));
 
         // console.log("Over todo:", res1);
 
@@ -61,8 +62,13 @@ const TodoList: React.FC<TodoProps> = ({ todos, setTodos }: TodoProps) => {
                 <span className="todos_heading">
                     Active Task
                 </span>
-                {
+                {/* {
                     todos.map(todo => (
+                        <SingleTodo key={todo.id} todo={todo} todos={todos} setTodos={setTodos} />
+                    ))
+                } */}
+                {
+                    firstColumnData.map((todo) => (
                         <SingleTodo key={todo.id} todo={todo} todos={todos} setTodos={setTodos} />
                     ))
                 }
@@ -85,7 +91,13 @@ const TodoList: React.FC<TodoProps> = ({ todos, setTodos }: TodoProps) => {
                 }
             </div>
 
-            <div className="todos remove">
+            <div
+                className="todos remove"
+                onDragOver={handleDragOver}
+                onDrop={handleDrop}
+                onDragEnter={handleDragOverStart}
+                onDragLeave={handleDragOverEnd}
+            >
                 <span className="todos_heading">
                     Completed
                 </span>

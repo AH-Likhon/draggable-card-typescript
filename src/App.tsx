@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import './App.css';
 import InputField from './components/InputField/InputField';
+import { addToCart, addToRow, getCart, getFirstColumn } from './components/LocalStorage/LocalStorage';
 import { TodoTypes } from './components/Todo/Todo';
 import TodoList from './components/TodoList/TodoList';
 
@@ -8,11 +9,14 @@ const App: React.FC = () => {
   const [todo, setTodo] = useState<string>("");
   const [todos, setTodos] = useState<TodoTypes[]>([]);
 
+  const getData = getFirstColumn();
+
   const handleAdd = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (todo) {
       setTodos([...todos, { id: Date.now(), todo, isDone: false }]);
+      addToRow({ id: Date.now(), todo, isDone: false });
       setTodo("");
     }
   }
