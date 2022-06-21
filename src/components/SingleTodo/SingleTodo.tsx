@@ -3,51 +3,36 @@ import { AiFillDelete, AiFillEdit } from "react-icons/ai";
 import { MdDone } from "react-icons/md";
 import './SingleTodo.css';
 import { useEffect, useRef, useState } from "react";
-import { addToCart, getCart, getFirstColumn, handleDelete, handleDid, handleESubmit } from "../LocalStorage/LocalStorage";
+import { getSecondColumn, getFirstColumn, handleDelete, handleDid, handleESubmit, addToRow, getThirdColumn } from "../LocalStorage/LocalStorage";
+import Swal from "sweetalert2";
 
 type SingleTodoTypes = {
+    action: "active-task" | "in-progress" | "completed";
     todo: TodoTypes;
-    todos: TodoTypes[];
-    setTodos: React.Dispatch<React.SetStateAction<TodoTypes[]>>;
-    // draggable?: boolean;
+    // todos: TodoTypes[];
+    // setTodos: React.Dispatch<React.SetStateAction<TodoTypes[]>>;
     onDragStart?: (e: React.DragEvent<HTMLDivElement>, id: number) => void;
-    // dragData?: TodoTypes[];
-    // setDragData?: React.Dispatch<React.SetStateAction<TodoTypes[]>>;
 }
 
-const SingleTodo = ({ todo, todos, setTodos }: SingleTodoTypes) => {
+const SingleTodo = ({ todo, action }: SingleTodoTypes) => {
     const [edit, setEdit] = useState<boolean>(false);
     const [editTodo, setEditTodo] = useState<string>(todo.todo);
-    const [dragData, setDragData] = useState<TodoTypes[]>([]);
 
-    const getData = getCart();
     const getFirstColumnData = getFirstColumn();
-
-    const handleDone = (id: number) => {
-        setTodos(todos.map(t => t.id === id ? { ...t, isDone: !t.isDone } : t));
-        // setTodos(todos.map(t => t.id === id ? { ...t, isDone: !t.isDone } : t));
-        // setDragData(getData.map((t: any) => t.id === id ? { ...t, isDone: !t.isDone } : t))
-    }
-
-    // const handleDelete = (id: number) => {
-    //     const result = todos.filter(t => t.id !== id);
-    //     setTodos(result);
-    // }
+    const getSecondColumnData = getSecondColumn();
+    const getThirdColumnData = getThirdColumn();
 
     const handleEdit = () => {
         if (!edit && !todo.isDone) {
             setEdit(!edit);
+        } else {
+            Swal.fire({
+                icon: 'error',
+                // title: 'Oops...',
+                text: "Locked file is not editable😥 Unlock it First!",
+            })
         }
     }
-
-    // const handleESubmit = (e: React.FormEvent, id: number) => {
-    //     e.preventDefault();
-
-    //     const result = todos.map(t => t.id === id ? { ...t, todo: editTodo } : t);
-    //     setTodos(result);
-
-    //     setEdit(false);
-    // }
 
     const inputRef = useRef<HTMLInputElement>(null);
 
@@ -56,33 +41,63 @@ const SingleTodo = ({ todo, todos, setTodos }: SingleTodoTypes) => {
     }, [edit])
 
 
-    const hadleDragStart = (e: React.DragEvent<HTMLDivElement>, id: number) => {
-        let result = todos.find(t => t.id === id);
-        // const get = getCart();
+    const hadleDragStart = (e: React.DragEvent<HTMLDivElement>, id: number, action: string) => {
+        if (action === "active-task") {
+            let result = getFirstColumnData.find(t => t.id === id);
 
-        if (result) {
-            // setDragData([...dragData, { id: result?.id, todo: result?.todo, isDone: result?.isDone }]);
+            console.log(result);
 
-            addToCart({ id: result?.id, todo: result?.todo, isDone: result?.isDone });
-            let res = { id: result?.id, todo: result?.todo, isDone: result?.isDone }
+            if (result && !result.isDone) {
+                let res = { id: result?.id, todo: result?.todo, isDone: result?.isDone, action }
+                e.dataTransfer.setData("text/plain", JSON.stringify(res));
 
-            e.dataTransfer.setData("text/plain", JSON.stringify(res));
-            // e.dataTransfer.effectAllowed = 'move';
-            // console.log(e.dataTransfer.setData("text/plain", JSON.stringify(res)));
+                addToRow({ id: result?.id, todo: result?.todo, isDone: result?.isDone }, action);
+                // e.dataTransfer.effectAllowed = 'move';
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    // title: 'Oops...',
+                    text: "Locked file is not draggable😥 Unlock it First!",
+                })
 
+            }
+        } else if (action === "in-progress") {
+            let result = getSecondColumnData.find(t => t.id === id);
 
-            // console.log("My ID:", dragData);
+            console.log(result);
+
+            if (result && !result.isDone) {
+                let res = { id: result?.id, todo: result?.todo, isDone: result?.isDone, action }
+                e.dataTransfer.setData("text/plain", JSON.stringify(res));
+
+                addToRow({ id: result?.id, todo: result?.todo, isDone: result?.isDone }, action);
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    // title: 'Oops...',
+                    text: "Locked file is not draggable😥 Unlock it First!",
+                })
+            }
+        } else if (action === "completed") {
+            let result = getThirdColumnData.find(t => t.id === id);
+
+            console.log(result);
+
+            if (result && result.isDone) {
+                Swal.fire({
+                    icon: 'error',
+                    // title: 'Oops...',
+                    text: "Locked file is not draggable😥 Unlock it First!",
+                })
+            }
         }
-        // setTodos(todos.filter(t => t.id !== id));
-        // // console.log(typeof result);
-        // setDragData(result);
-        // e.dataTransfer.setData('text', `${id}`)
+
     }
 
 
     return (
-        <div draggable onDragStart={e => hadleDragStart(e, todo.id)}>
-            <form className="single_todos" onSubmit={e => handleESubmit(e, todo.id, setEdit, editTodo)}>
+        <div draggable onDragStart={e => hadleDragStart(e, todo.id, action)}>
+            <form className="single_todos" onSubmit={e => handleESubmit(e, todo.id, setEdit, editTodo, action)}>
                 {
                     edit ? <input
                         ref={inputRef}
@@ -100,10 +115,17 @@ const SingleTodo = ({ todo, todos, setTodos }: SingleTodoTypes) => {
                     <span onClick={handleEdit} className="icon">
                         <AiFillEdit />
                     </span>
-                    <span onClick={() => handleDelete(todo.id)} className="icon">
+                    <span
+                        onClick={() =>
+                            !todo.isDone ? handleDelete(todo.id, action) : Swal.fire({
+                                icon: 'error',
+                                // title: 'Oops...',
+                                text: "Locked file is not eligible for deletion😥 Unlock it First!",
+                            })}
+                        className="icon">
                         <AiFillDelete />
                     </span>
-                    <span onClick={() => handleDid(todo.id)} className="icon">
+                    <span onClick={() => handleDid(todo.id, action)} className="icon">
                         <MdDone />
                     </span>
                 </div>
