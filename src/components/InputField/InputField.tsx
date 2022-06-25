@@ -24,13 +24,18 @@ const InputField = ({ todo, setTodo, handleAdd, total, setTotal, remaining, setR
         let charVal = todo.length;
         setTotal(charVal);
         // console.log(charVal);
-        setRemaining(100 - charVal);
+        setRemaining(50 - charVal);
     }
 
     return (
         <>
             <form className="input" onSubmit={handleOnSubmit}>
-                <input ref={inputRef} type="input" placeholder="Type Something" className="input_box"
+                <input
+                    ref={inputRef}
+                    type="input"
+                    maxLength={50}
+                    placeholder="Type Something"
+                    className="input_box"
                     value={todo}
                     onChange={(e) => setTodo(e.target.value)}
                     onKeyUp={handleOnkey}

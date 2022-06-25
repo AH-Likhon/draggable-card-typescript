@@ -106,7 +106,7 @@ const SingleTodo = ({ todo, action, total, setTotal, remaining, setRemaining }: 
         let charVal = editTodo.length;
         setTotal(charVal);
         // console.log(charVal);
-        setRemaining(100 - charVal);
+        setRemaining(50 - charVal);
     }
 
 
@@ -116,6 +116,7 @@ const SingleTodo = ({ todo, action, total, setTotal, remaining, setRemaining }: 
                 {
                     edit ? <input
                         ref={inputRef}
+                        maxLength={50}
                         className="single_todos-text"
                         value={editTodo}
                         onChange={e => setEditTodo(e.target.value)}

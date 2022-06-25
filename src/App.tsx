@@ -9,7 +9,7 @@ const App: React.FC = () => {
   const [todo, setTodo] = useState<string>("");
   const [todos, setTodos] = useState<TodoTypes[]>([]);
   const [total, setTotal] = useState<number>(0);
-  const [remaining, setRemaining] = useState<number>(100);
+  const [remaining, setRemaining] = useState<number>(50);
 
   // const getData = getFirstColumn();
 
