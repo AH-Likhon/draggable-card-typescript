@@ -8,6 +8,8 @@ import TodoList from './components/TodoList/TodoList';
 const App: React.FC = () => {
   const [todo, setTodo] = useState<string>("");
   const [todos, setTodos] = useState<TodoTypes[]>([]);
+  const [total, setTotal] = useState<number>(0);
+  const [remaining, setRemaining] = useState<number>(100);
 
   // const getData = getFirstColumn();
 
@@ -26,8 +28,8 @@ const App: React.FC = () => {
   return (
     <div className="App">
       <span className='heading'>Kanban Board</span>
-      <InputField todo={todo} setTodo={setTodo} handleAdd={handleAdd} />
-      <TodoList todos={todos} setTodos={setTodos} />
+      <InputField todo={todo} setTodo={setTodo} handleAdd={handleAdd} total={total} setTotal={setTotal} remaining={remaining} setRemaining={setRemaining} />
+      <TodoList total={total} setTotal={setTotal} remaining={remaining} setRemaining={setRemaining} />
     </div>
   );
 }

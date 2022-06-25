@@ -1,3 +1,4 @@
+import Swal from "sweetalert2";
 import { TodoTypes } from "../Todo/Todo";
 
 const addToRow = (item: TodoTypes, action: string) => {
@@ -82,6 +83,71 @@ const handleDid = (id: number, action: string) => {
     }
 }
 
+
+const handleCopy = (id: number, action: string, setAlert: React.Dispatch<React.SetStateAction<string>>) => {
+    if (action === "active-task") {
+        const getData = getFirstColumn();
+        const result = getData.find(t => t.id === id);
+
+        // console.log(result);
+        if (result && !result.isDone) {
+            // copied = "copied";
+            navigator.clipboard.writeText(result.todo);
+            setAlert("copied");
+
+            setTimeout(() => {
+                setAlert("");
+            }, 800)
+        } else {
+            Swal.fire({
+                icon: 'error',
+                // title: 'Oops...',
+                text: "Locked file is not eligible to copy😥 Unlock it First!",
+            })
+        }
+    } else if (action === "in-progress") {
+        const getData = getSecondColumn();
+        const result = getData.find(t => t.id === id);
+
+        // console.log(result);
+        if (result && !result.isDone) {
+            // copied = "copied";
+            navigator.clipboard.writeText(result.todo);
+            setAlert("copied");
+
+            setTimeout(() => {
+                setAlert("");
+            }, 800)
+        } else {
+            Swal.fire({
+                icon: 'error',
+                // title: 'Oops...',
+                text: "Locked file is not eligible to copy😥 Unlock it First!",
+            })
+        }
+    } else if (action === "completed") {
+        const getData = getThirdColumn();
+        const result = getData.find(t => t.id === id);
+
+        // console.log(result);
+        if (result && !result.isDone) {
+            // copied = "copied";
+            navigator.clipboard.writeText(result.todo);
+            setAlert("copied");
+
+            setTimeout(() => {
+                setAlert("");
+            }, 800)
+        } else {
+            Swal.fire({
+                icon: 'error',
+                // title: 'Oops...',
+                text: "Locked file is not eligible to copy😥 Unlock it First!",
+            })
+        }
+    }
+}
+
 const handleDelete = (id: number, action: string) => {
     if (action === "active-task") {
         const getData = getFirstColumn();
@@ -155,4 +221,4 @@ const getThirdColumn = (): TodoTypes[] => {
     return thirdColumnData ? JSON.parse(thirdColumnData) : [];
 }
 
-export { getFirstColumn, getSecondColumn, getThirdColumn, saveToRow, addToRow, handleDid, handleDelete, handleESubmit };
+export { getFirstColumn, getSecondColumn, getThirdColumn, saveToRow, addToRow, handleDid, handleCopy, handleDelete, handleESubmit };

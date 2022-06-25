@@ -40,6 +40,14 @@
     background-color: #388ae2;
 }
 
+.counter {
+    width: 70%;
+    display: flex;
+    justify-content: space-between;
+    color: #fff;
+    margin: 20px 0px;
+}
+
 @media (max-width: 700px) {
     .input {
         width: 80%;

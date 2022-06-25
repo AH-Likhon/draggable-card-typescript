@@ -1,9 +1,10 @@
 import { TodoTypes } from "../Todo/Todo";
 import { AiFillDelete, AiFillEdit } from "react-icons/ai";
+import { FaCopy } from "react-icons/fa";
 import { MdDone } from "react-icons/md";
 import './SingleTodo.css';
 import { useEffect, useRef, useState } from "react";
-import { getSecondColumn, getFirstColumn, handleDelete, handleDid, handleESubmit, addToRow, getThirdColumn } from "../LocalStorage/LocalStorage";
+import { getSecondColumn, getFirstColumn, handleDelete, handleDid, handleESubmit, addToRow, getThirdColumn, handleCopy } from "../LocalStorage/LocalStorage";
 import Swal from "sweetalert2";
 
 type SingleTodoTypes = {
@@ -12,11 +13,16 @@ type SingleTodoTypes = {
     // todos: TodoTypes[];
     // setTodos: React.Dispatch<React.SetStateAction<TodoTypes[]>>;
     onDragStart?: (e: React.DragEvent<HTMLDivElement>, id: number) => void;
+    total: number;
+    setTotal: React.Dispatch<React.SetStateAction<number>>;
+    remaining: number;
+    setRemaining: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const SingleTodo = ({ todo, action }: SingleTodoTypes) => {
+const SingleTodo = ({ todo, action, total, setTotal, remaining, setRemaining }: SingleTodoTypes) => {
     const [edit, setEdit] = useState<boolean>(false);
     const [editTodo, setEditTodo] = useState<string>(todo.todo);
+    const [alert, setAlert] = useState<string>("");
 
     const getFirstColumnData = getFirstColumn();
     const getSecondColumnData = getSecondColumn();
@@ -95,6 +101,15 @@ const SingleTodo = ({ todo, action }: SingleTodoTypes) => {
     }
 
 
+
+    const handleOnkey = () => {
+        let charVal = editTodo.length;
+        setTotal(charVal);
+        // console.log(charVal);
+        setRemaining(100 - charVal);
+    }
+
+
     return (
         <div draggable onDragStart={e => hadleDragStart(e, todo.id, action)}>
             <form className="single_todos" onSubmit={e => handleESubmit(e, todo.id, setEdit, editTodo, action)}>
@@ -104,6 +119,7 @@ const SingleTodo = ({ todo, action }: SingleTodoTypes) => {
                         className="single_todos-text"
                         value={editTodo}
                         onChange={e => setEditTodo(e.target.value)}
+                        onKeyUp={handleOnkey}
                     /> : todo.isDone ? <s className="single_todos-text">
                         {todo.todo}
                     </s> : <span className="single_todos-text">
@@ -127,6 +143,12 @@ const SingleTodo = ({ todo, action }: SingleTodoTypes) => {
                     </span>
                     <span onClick={() => handleDid(todo.id, action)} className="icon">
                         <MdDone />
+                    </span>
+                    <span onClick={() => handleCopy(todo.id, action, setAlert)} className="icon">
+                        <FaCopy title="copy" />
+                        {
+                            alert ? <span className="copyText"> {alert}</span> : ""
+                        }
                     </span>
                 </div>
             </form>

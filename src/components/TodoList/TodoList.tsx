@@ -5,11 +5,15 @@ import { TodoTypes } from "../Todo/Todo";
 import './TodoList.css';
 
 interface TodoProps {
-    todos: TodoTypes[];
-    setTodos: React.Dispatch<React.SetStateAction<TodoTypes[]>>;
+    // todos: TodoTypes[];
+    // setTodos: React.Dispatch<React.SetStateAction<TodoTypes[]>>;
+    total: number;
+    setTotal: React.Dispatch<React.SetStateAction<number>>;
+    remaining: number;
+    setRemaining: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const TodoList: React.FC<TodoProps> = ({ todos, setTodos }: TodoProps) => {
+const TodoList: React.FC<TodoProps> = ({ total, setTotal, remaining, setRemaining }: TodoProps) => {
 
     const [dragOver, setDragOver] = useState(false);
     const handleDragOverStart = () => setDragOver(true);
@@ -54,7 +58,7 @@ const TodoList: React.FC<TodoProps> = ({ todos, setTodos }: TodoProps) => {
                 </span>
                 {
                     firstColumnData.map((todo) => (
-                        <SingleTodo action="active-task" key={todo.id} todo={todo} />
+                        <SingleTodo action="active-task" key={todo.id} todo={todo} total={total} setTotal={setTotal} remaining={remaining} setRemaining={setRemaining} />
                     ))
                 }
             </div>
@@ -71,7 +75,7 @@ const TodoList: React.FC<TodoProps> = ({ todos, setTodos }: TodoProps) => {
                 </span>
                 {
                     secondColumnData.map((todo) => (
-                        <SingleTodo action="in-progress" key={todo.id} todo={todo} />
+                        <SingleTodo action="in-progress" key={todo.id} todo={todo} total={total} setTotal={setTotal} remaining={remaining} setRemaining={setRemaining} />
                     ))
                 }
             </div>
@@ -89,7 +93,7 @@ const TodoList: React.FC<TodoProps> = ({ todos, setTodos }: TodoProps) => {
 
                 {
                     thirdColumnData.map((todo) => (
-                        <SingleTodo action="completed" key={todo.id} todo={todo} />
+                        <SingleTodo action="completed" key={todo.id} todo={todo} total={total} setTotal={setTotal} remaining={remaining} setRemaining={setRemaining} />
                     ))
                 }
             </div>
